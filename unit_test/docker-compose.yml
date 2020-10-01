@@ -12,10 +12,16 @@ services:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
+    ports:
+    # Exposes 29092 for external connections to the broker
+    # Use kafka1:9092 for connections internal on the docker network
+    # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092, PLAINTEXT_HOST://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       RUNTESTS: 0
   
